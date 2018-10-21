@@ -1,0 +1,25 @@
+@import url(
+  https://fonts.googleapis.com/css?family=Roboto:400,
+  500,
+  700,
+  300,
+  100
+);
+
+.start-stop {
+  position: absolute;
+  top: 500;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+button {
+  width: 100px;
+  height: 30px;
+  margin-top: 20px;
+  border-radius: 20px;
+  border: none;
+  color: White;
+  background: #00c9b7;
+  margin-bottom: 15px;
+}

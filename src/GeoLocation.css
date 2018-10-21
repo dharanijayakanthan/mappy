@@ -1,0 +1,11 @@
+#start-trip {
+  width: 200px;
+  height: 40px;
+  position: absolute;
+  top: 580px;
+  left: 43%;
+}
+
+.g-location {
+  width: 100%;
+}

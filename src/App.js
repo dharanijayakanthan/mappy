@@ -1,28 +1,197 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+/*global google*/
 
-class App extends Component {
+import React, { Component } from "react";
+import Starter from "./AutoComplete";
+import Geolocated from "./GeoLocation";
+import TripTable from "./TripTable";
+import "./App.css";
+const { compose, withProps, lifecycle } = require("recompose");
+// const {
+//   MarkerWithLabel
+// } = require("react-google-maps/lib/components/addons/MarkerWithLabel");
+
+const {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  DirectionsRenderer
+} = require("react-google-maps");
+
+const {
+  DrawingManager
+} = require("react-google-maps/lib/components/drawing/DrawingManager");
+
+class MyMapComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      startlat: "",
+      startlng: "",
+      endlat: "",
+      endlng: "",
+      checkpoint: " "
+    };
+  }
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+    var cthis = this;
+    function letsCall(s) {
+      cthis.setState({
+        startlat: s.startlat,
+        startlng: s.startlng,
+        endlat: s.endlat,
+        endlng: s.endlng,
+        checkpoint: s.checkpoint
+      });
+
+      // console.log(cthis.state);
+    }
+    function locationInnerCall(s) {
+      cthis.setState({
+        startlat: s.latitude,
+        startlng: s.longitude
+      });
+    }
+
+    function updateTable(s) {
+      var locationArray = [];
+      console.table(s);
+      if (localStorage.getItem("location") == undefined) {
+        locationArray = [];
+        locationArray.push(s);
+
+        localStorage.setItem("location", locationArray);
+      } else {
+        locationArray.push(s);
+        localStorage.setItem("location", locationArray);
+
+        console.log("localstorage for lcation already exists");
+      }
+    }
+    const MapWithADirectionsRenderer = compose(
+      withProps({
+        googleMapURL:
+          "https://maps.googleapis.com/maps/api/js?key=AIzaSyB-NE31Z7xIugyPm9B-Q7QYrRNigqf34XM&v=3.exp&libraries=geometry,drawing,places",
+        loadingElement: <div style={{ height: `100%` }} />,
+        containerElement: <div style={{ height: `400px` }} />,
+        mapElement: <div style={{ height: `100%` }} />
+      }),
+      withScriptjs,
+      withGoogleMap,
+      lifecycle({
+        componentWillMount() {
+          console.log(cthis.state);
+          const DirectionsService = new google.maps.DirectionsService();
+          var waypts = [
+            { locationList: "bangalore" },
+            { locationList: "maharastra" },
+            { locationList: "pune" }
+          ];
+          var ms = waypts.map(i => {
+            return { location: i.locationList };
+          });
+          console.log(ms);
+
+          DirectionsService.route(
+            {
+              origin: new google.maps.LatLng(
+                cthis.state.startlat,
+                cthis.state.startlng
+              ),
+              destination: new google.maps.LatLng(
+                cthis.state.endlat,
+                cthis.state.endlng
+              ),
+              waypoints: ms,
+              // waypoints: [{ location: cthis.state.checkpoint }],
+              travelMode: google.maps.TravelMode.DRIVING
+            },
+            (result, status) => {
+              if (status === google.maps.DirectionsStatus.OK) {
+                this.setState({
+                  directions: result
+                });
+              } else {
+                console.error(`error fetching directions ${result}`);
+              }
+            }
+          );
+        }
+      })
+    )(props => (
+      <div className="mappyContainer">
+        <GoogleMap
+          defaultZoom={17}
+          defaultCenter={new google.maps.LatLng(12.9795, 77.763)}
+        >
+          <DrawingManager
+            defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
+            defaultOptions={{
+              drawingControl: true,
+              drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: [
+                  google.maps.drawing.OverlayType.CIRCLE,
+                  google.maps.drawing.OverlayType.POLYGON,
+                  google.maps.drawing.OverlayType.POLYLINE,
+                  google.maps.drawing.OverlayType.RECTANGLE
+                ]
+              },
+              circleOptions: {
+                fillColor: "black",
+                fillOpacity: 0.1,
+                strokeWeight: 1,
+                clickable: true,
+                editable: true,
+                zIndex: 1
+              },
+              polygonOptions: {
+                fillColor: "black",
+                fillOpacity: 0.1,
+                strokeWeight: 1,
+                clickable: false,
+                editable: true,
+                zIndex: 1
+              },
+              polylineOptions: {
+                fillColor: "black",
+                fillOpacity: 0.1,
+                strokeWeight: 1,
+                clickable: false,
+                editable: true,
+                zIndex: 1
+              },
+              rectangleOptions: {
+                fillColor: "black",
+                fillOpacity: 0.1,
+                strokeWeight: 1,
+                clickable: false,
+                editable: true,
+                zIndex: 1
+              }
+            }}
+          />
+
+          {props.directions && (
+            <DirectionsRenderer directions={props.directions} />
+          )}
+          <Starter
+            childCall={function(st) {
+              letsCall(st.state);
+              updateTable(st.state);
+            }}
+          />
+          <Geolocated
+            locationCall={function(loc) {
+              locationInnerCall(loc);
+            }}
+          />
+        </GoogleMap>
+        <TripTable />
       </div>
-    );
+    ));
+    return <MapWithADirectionsRenderer />;
   }
 }
 
-export default App;
+export default MyMapComponent;
