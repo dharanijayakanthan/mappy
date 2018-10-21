@@ -3,23 +3,25 @@ import "./Table.css";
 
 class TripTable extends Component {
   render() {
+    var tripArray = JSON.parse(localStorage.getItem("location"));
+
     return (
       <table className="table-fill">
         <thead>
           <tr>
-            <th className="text-left">Strt</th>
+            <th className="text-left">Start</th>
             <th className="text-left">Destination</th>
           </tr>
         </thead>
         <tbody className="table-hover">
-          <tr>
-            <td className="text-left">{localStorage.getItem("Location")}</td>
-            <td className="text-left">$ 50,000.00</td>
-          </tr>
-          <tr>
-            <td className="text-left">February</td>
-            <td className="text-left">$ 10,000.00</td>
-          </tr>
+          {tripArray.map(i => {
+            return (
+              <tr>
+                <td className="text-left">{i.startPos}</td>
+                <td className="text-left">{i.endPos}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     );

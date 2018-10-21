@@ -1,19 +1,5 @@
-@import url(
-  https://fonts.googleapis.com/css?family=Roboto:400,
-  500,
-  700,
-  300,
-  100
-);
-
 * {
   box-sizing: border-box;
-}
-.app {
-}
-
-.mappycontainer {
-  width: 50%;
 }
 
 .starter {

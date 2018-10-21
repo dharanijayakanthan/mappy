@@ -1,9 +1,9 @@
 /*global google*/
 
 import React, { Component } from "react";
-import Starter from "./AutoComplete";
-import Geolocated from "./GeoLocation";
-import TripTable from "./TripTable";
+import Starter from "./Components/AutoComplete/AutoComplete";
+import Geolocated from "./Components/GeoLocation/GeoLocation";
+import TripTable from "./Components/Table/TripTable";
 import "./App.css";
 const { compose, withProps, lifecycle } = require("recompose");
 // const {
@@ -14,7 +14,8 @@ const {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  DirectionsRenderer
+  DirectionsRenderer,
+  Circle
 } = require("react-google-maps");
 
 const {
@@ -54,18 +55,15 @@ class MyMapComponent extends Component {
     }
 
     function updateTable(s) {
-      var locationArray = [];
       console.table(s);
-      if (localStorage.getItem("location") == undefined) {
-        locationArray = [];
+      if (localStorage.getItem("location") === undefined) {
+        var locationArray = [];
         locationArray.push(s);
-
-        localStorage.setItem("location", locationArray);
+        localStorage.setItem("location", JSON.stringify(locationArray));
       } else {
-        locationArray.push(s);
-        localStorage.setItem("location", locationArray);
-
-        console.log("localstorage for lcation already exists");
+        var newArray = JSON.parse(localStorage.getItem("location"));
+        newArray.push(s);
+        localStorage.setItem("location", JSON.stringify(newArray));
       }
     }
     const MapWithADirectionsRenderer = compose(
@@ -82,15 +80,15 @@ class MyMapComponent extends Component {
         componentWillMount() {
           console.log(cthis.state);
           const DirectionsService = new google.maps.DirectionsService();
-          var waypts = [
-            { locationList: "bangalore" },
-            { locationList: "maharastra" },
-            { locationList: "pune" }
-          ];
-          var ms = waypts.map(i => {
-            return { location: i.locationList };
-          });
-          console.log(ms);
+          // var waypts = [
+          //   { locationList: "bangalore" },
+          //   { locationList: "maharastra" },
+          //   { locationList: "pune" }
+          // ];
+          // var ms = waypts.map(i => {
+          //   return { location: i.locationList };
+          // });
+          // console.log(ms);
 
           DirectionsService.route(
             {
@@ -102,8 +100,8 @@ class MyMapComponent extends Component {
                 cthis.state.endlat,
                 cthis.state.endlng
               ),
-              waypoints: ms,
-              // waypoints: [{ location: cthis.state.checkpoint }],
+              // waypoints: ms,
+              waypoints: [{ location: cthis.state.checkpoint }],
               travelMode: google.maps.TravelMode.DRIVING
             },
             (result, status) => {
@@ -124,6 +122,21 @@ class MyMapComponent extends Component {
           defaultZoom={17}
           defaultCenter={new google.maps.LatLng(12.9795, 77.763)}
         >
+          <Circle
+            defaultOptions={{
+              circleOptions: {
+                fillColor: `black`,
+                fillOpacity: 0.2,
+                strokeWeight: 5,
+                clickable: false,
+                editable: true,
+                zIndex: 1,
+                center: new google.maps.LatLng(12.9795, 77.763),
+                radius: 500,
+                visible: true
+              }
+            }}
+          />
           <DrawingManager
             defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
             defaultOptions={{
@@ -143,7 +156,8 @@ class MyMapComponent extends Component {
                 strokeWeight: 1,
                 clickable: true,
                 editable: true,
-                zIndex: 1
+                zIndex: 1,
+                radius: 500
               },
               polygonOptions: {
                 fillColor: "black",

@@ -36,7 +36,7 @@ class Starter extends Component {
           }}
           types={["(regions)"]}
           componentRestrictions={{ country: "in" }}
-          placeHolder="start"
+          placeholder="start"
         />
         <br />
         <Autocomplete
@@ -57,7 +57,7 @@ class Starter extends Component {
           }}
           types={["(regions)"]}
           componentRestrictions={{ country: "in" }}
-          placeHolder="destination"
+          placeholder="destination"
         />
         <br />
         <Autocomplete
@@ -77,7 +77,7 @@ class Starter extends Component {
           }}
           types={["(regions)"]}
           componentRestrictions={{ country: "in" }}
-          placeHolder="via"
+          placeholder="via"
         />
         <br />
         <button onClick={() => this.props.childCall(this)}>START</button>

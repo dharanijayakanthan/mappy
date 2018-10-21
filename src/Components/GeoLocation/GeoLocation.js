@@ -21,7 +21,7 @@ class Demo extends Component {
     ) : !this.props.isGeolocationEnabled ? (
       <div>Geolocation is not enabled</div>
     ) : this.props.coords ? (
-      <div class="g-location">
+      <div className="g-location">
         <MarkerWithLabel
           position={{
             lat: this.props.coords.latitude,
@@ -36,7 +36,7 @@ class Demo extends Component {
         >
           <div>
             <img
-              src={require("./truck.png")}
+              src={require("../../assets/truck.png")}
               alt="truck"
               width="50"
               height="50"
