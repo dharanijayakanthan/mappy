@@ -14,14 +14,18 @@ class TripTable extends Component {
           </tr>
         </thead>
         <tbody className="table-hover">
-          {tripArray.map(i => {
-            return (
-              <tr>
-                <td className="text-left">{i.startPos}</td>
-                <td className="text-left">{i.endPos}</td>
-              </tr>
-            );
-          })}
+          {tripArray == undefined ? (
+            <tr>No Trips yet</tr>
+          ) : (
+            tripArray.map(i => {
+              return (
+                <tr>
+                  <td className="text-left">{i.startPos}</td>
+                  <td className="text-left">{i.endPos}</td>
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
     );

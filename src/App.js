@@ -56,7 +56,7 @@ class MyMapComponent extends Component {
 
     function updateTable(s) {
       console.table(s);
-      if (localStorage.getItem("location") === undefined) {
+      if (localStorage.getItem("location") == undefined) {
         var locationArray = [];
         locationArray.push(s);
         localStorage.setItem("location", JSON.stringify(locationArray));
